@@ -5,7 +5,7 @@
 # ------------------------------------------
 GITHUB_USERNAME="himelku"                           # Your GitHub username
 GITHUB_REPO_NAME="volatility_comparison"    # Your GitHub repository name
-COMMIT_MESSAGE="Initial commit with all files" # Customize your commit message
+COMMIT_MESSAGE="interactive plot commit app.py" # Customize your commit message
 BRANCH_NAME="main"                             # Usually 'main' or 'master'
 
 # ------------------------------------------

@@ -1,108 +1,118 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
-from pathlib import Path
+import plotly.graph_objects as go
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
 
-# --------------------------- App Configuration --------------------------- #
-st.set_page_config(page_title="Volatility Model Comparison", layout="wide")
-st.title("📈 Volatility Prediction Dashboard")
 
-# --------------------------- Utility Functions --------------------------- #
-data_dir = Path("data")
-plot_dir = Path("plots")
+# ------------------ Helper Functions ------------------ #
+def load_data(file):
+    df = pd.read_csv(file)
+    if "Date" not in df.columns:
+        for col in ["timestamp", "test_date"]:
+            if col in df.columns:
+                df["Date"] = pd.to_datetime(df[col])
+                break
+    else:
+        df["Date"] = pd.to_datetime(df["Date"])
+    return df
 
-# Available result files mapped to readable names
+
+def plot_interactive(df_list, labels, title):
+    fig = go.Figure()
+    for df, label in zip(df_list, labels):
+        fig.add_trace(
+            go.Scatter(
+                x=df["Date"],
+                y=df[df.columns[1]],
+                mode="lines",
+                name=label,
+                hovertemplate="%{x|%Y-%m-%d %H:%M}<br>%{y:.6f}<extra></extra>",
+            )
+        )
+    fig.update_layout(
+        title=title,
+        xaxis_title="Date",
+        yaxis_title="Volatility",
+        hovermode="x unified",
+        template="plotly_white",
+    )
+    return fig
+
+
+def compute_metrics(df):
+    mae = mean_absolute_error(df["actual"], df["prediction"])
+    rmse = np.sqrt(mean_squared_error(df["actual"], df["prediction"]))
+    return mae, rmse
+
+
+# ------------------ App Config ------------------ #
+st.set_page_config(layout="wide", page_title="Volatility Model Dashboard")
+st.title("📈 Volatility Forecasting Dashboard")
+
+# ------------------ Sidebar ------------------ #
+data_dir = "data"
 model_files = {
     "GARCH": "results_garch_intraday.csv",
     "LSTM": "results_lstm_intraday.csv",
     "LSTM-GARCH": "results_lstm_garch_intraday.csv",
     "LSTM-GARCH-VIX": "results_lstm_garch_vix_intraday.csv",
-    "LSTM-GARCH-VIX (1 Layer)": "results_lstm_garch_vix_layer_1_intraday.csv",
-    "LSTM-GARCH-VIX (3 Layers)": "results_lstm_garch_vix_layer_3_intraday.csv",
-    "LSTM-GARCH-VIX (Lookback 5)": "results_lstm_garch_vix_lookback_5.csv",
-    "LSTM-GARCH-VIX (Lookback 66)": "results_lstm_garch_vix_lookback_66.csv",
-    "LSTM-GARCH-VIX (MAE Loss)": "results_lstm_garch_vix_mae_loss_intraday.csv",
-    "LSTM-GARCH-VIX (Pct Change)": "results_lstm_garch_vix_pct_change.csv",
-    "LSTM-GARCH-VIX (ReLU)": "results_lstm_garch_vix_relu.csv",
-    "LSTM-GARCH-EWMA-VIX": "results_lstm_garch_ewma_vix_intraday.csv",
+    "LSTM-GARCH-VIX-ReLU": "results_lstm_garch_vix_relu.csv",
+    "LSTM-GARCH-VIX-MAE Loss": "results_lstm_garch_vix_mae_loss_intraday.csv",
+    "LSTM-GARCH-VIX-Pct Change": "results_lstm_garch_vix_pct_change.csv",
+    "LSTM-GARCH-VIX-Lookback 5": "results_lstm_garch_vix_lookback_5.csv",
+    "LSTM-GARCH-VIX-Lookback 66": "results_lstm_garch_vix_lookback_66.csv",
+    "LSTM-GARCH-VIX-1 Layer": "results_lstm_garch_vix_layer_1_intraday.csv",
+    "LSTM-GARCH-VIX-3 Layers": "results_lstm_garch_vix_layer_3_intraday.csv",
     "EWMA": "results_ewma.csv",
 }
 
-
-# Load and clean data
-def load_model_data(model_key):
-    file_path = data_dir / model_files[model_key]
-    if not file_path.exists():
-        st.warning(f"File not found: {model_files[model_key]}")
-        return None
-
-    df = pd.read_csv(file_path)
-
-    # Rename datetime column to 'Date'
-    for col in ["Date", "timestamp", "test_date"]:
-        if col in df.columns:
-            df["Date"] = pd.to_datetime(df[col])
-            break
-
-    df.dropna(subset=["Date"], inplace=True)
-    return df
-
-
-# Plot selected models
-def plot_models(selected_models):
-    fig, ax = plt.subplots(figsize=(14, 6))
-
-    for model in selected_models:
-        df = load_model_data(model)
-        if df is None:
-            continue
-
-        if model == "EWMA":
-            if "log_returns" in df.columns and "ewma_volatility" in df.columns:
-                rolling_std = df["log_returns"].rolling(26).std().dropna()
-                ax.plot(
-                    df["Date"].iloc[25:],
-                    df["ewma_volatility"].iloc[25:],
-                    label="EWMA Volatility",
-                    linestyle="-",
-                    color="blue",
-                )
-                ax.plot(
-                    df["Date"].iloc[25:],
-                    rolling_std,
-                    label="Rolling Std Dev",
-                    linestyle="--",
-                    color="gray",
-                )
-        else:
-            if {"actual", "prediction"}.issubset(df.columns):
-                ax.plot(df["Date"], df["prediction"], label=model, linestyle="-")
-                ax.plot(
-                    df["Date"],
-                    df["actual"],
-                    label=f"Actual ({model})",
-                    linestyle="--",
-                    alpha=0.5,
-                )
-
-    ax.set_title("Volatility Model Comparison")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Volatility")
-    ax.grid(True)
-    ax.legend()
-    st.pyplot(fig)
-
-
-# --------------------------- Sidebar UI --------------------------- #
-st.sidebar.header("Select Models to Compare")
 selected_models = st.sidebar.multiselect(
-    "Available Models:",
+    "Select models to visualize:",
     options=list(model_files.keys()),
-    default=["GARCH", "LSTM", "EWMA"],
+    default=["GARCH", "LSTM"],
 )
 
-if selected_models:
-    plot_models(selected_models)
-else:
-    st.info("Please select at least one model to view the plot.")
+# ------------------ Main Tab ------------------ #
+st.subheader("📊 Model Output Comparison")
+for model_name in selected_models:
+    file_path = os.path.join(data_dir, model_files[model_name])
+    if not os.path.exists(file_path):
+        st.warning(f"File not found for {model_name}: {file_path}")
+        continue
+
+    df = load_data(file_path)
+    if "actual" in df.columns and "prediction" in df.columns:
+        df = df.dropna(subset=["actual", "prediction"])
+        mae, rmse = compute_metrics(df)
+        st.markdown(f"### {model_name}")
+        st.write(f"MAE: `{mae:.6f}` | RMSE: `{rmse:.6f}`")
+
+        chart = plot_interactive(
+            [df[["Date", "prediction"]], df[["Date", "actual"]]],
+            [f"Predicted ({model_name})", "Actual"],
+            f"{model_name} vs. Actual Volatility",
+        )
+        st.plotly_chart(chart, use_container_width=True)
+
+    elif (
+        model_name == "EWMA"
+        and "ewma_volatility" in df.columns
+        and "log_returns" in df.columns
+    ):
+        df["rolling_std"] = df["log_returns"].rolling(26).std()
+        df.dropna(inplace=True)
+        mae = mean_absolute_error(df["rolling_std"], df["ewma_volatility"])
+        rmse = np.sqrt(mean_squared_error(df["rolling_std"], df["ewma_volatility"]))
+        st.markdown("### EWMA")
+        st.write(f"MAE: `{mae:.6f}` | RMSE: `{rmse:.6f}`")
+
+        chart = plot_interactive(
+            [df[["Date", "ewma_volatility"]], df[["Date", "rolling_std"]]],
+            ["EWMA Volatility", "Rolling Std Dev (26)"],
+            "EWMA vs Rolling Std Dev",
+        )
+        st.plotly_chart(chart, use_container_width=True)
+    else:
+        st.warning(f"Unsupported format in {model_name}")
