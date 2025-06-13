@@ -7,16 +7,20 @@ import numpy as np
 
 
 # ------------------ Helper Functions ------------------ #
-def load_data(file):
-    df = pd.read_csv(file)
-    if "Date" not in df.columns:
-        for col in ["timestamp", "test_date"]:
-            if col in df.columns:
-                df["Date"] = pd.to_datetime(df[col])
-                break
-    else:
-        df["Date"] = pd.to_datetime(df["Date"])
+def load_data(filepath):
+    df = pd.read_csv(filepath)
+    # Assign standard datetime column
+    for col in ["Date", "timestamp", "test_date"]:
+        if col in df.columns:
+            df["Date"] = pd.to_datetime(df[col])
+            break
     return df
+
+
+def compute_metrics(actual, predicted):
+    mae = mean_absolute_error(actual, predicted)
+    rmse = np.sqrt(mean_squared_error(actual, predicted))
+    return mae, rmse
 
 
 def plot_interactive(df_list, labels, title):
@@ -41,23 +45,18 @@ def plot_interactive(df_list, labels, title):
     return fig
 
 
-def compute_metrics(df):
-    mae = mean_absolute_error(df["actual"], df["prediction"])
-    rmse = np.sqrt(mean_squared_error(df["actual"], df["prediction"]))
-    return mae, rmse
-
-
-# ------------------ App Config ------------------ #
-st.set_page_config(layout="wide", page_title="Volatility Model Dashboard")
+# ------------------ Streamlit Config ------------------ #
+st.set_page_config(layout="wide", page_title="Volatility Forecasting Dashboard")
 st.title("📈 Volatility Forecasting Dashboard")
 
-# ------------------ Sidebar ------------------ #
+# ------------------ Sidebar Model Selector ------------------ #
 data_dir = "data"
 model_files = {
     "GARCH": "results_garch_intraday.csv",
     "LSTM": "results_lstm_intraday.csv",
     "LSTM-GARCH": "results_lstm_garch_intraday.csv",
     "LSTM-GARCH-VIX": "results_lstm_garch_vix_intraday.csv",
+    "LSTM-GARCH-EWMA-VIX": "results_lstm_garch_ewma_vix_intraday.csv",
     "LSTM-GARCH-VIX-ReLU": "results_lstm_garch_vix_relu.csv",
     "LSTM-GARCH-VIX-MAE Loss": "results_lstm_garch_vix_mae_loss_intraday.csv",
     "LSTM-GARCH-VIX-Pct Change": "results_lstm_garch_vix_pct_change.csv",
@@ -74,45 +73,70 @@ selected_models = st.sidebar.multiselect(
     default=["GARCH", "LSTM"],
 )
 
-# ------------------ Main Tab ------------------ #
+# ------------------ Main Area: Model Results ------------------ #
 st.subheader("📊 Model Output Comparison")
+
 for model_name in selected_models:
     file_path = os.path.join(data_dir, model_files[model_name])
+
     if not os.path.exists(file_path):
         st.warning(f"File not found for {model_name}: {file_path}")
         continue
 
     df = load_data(file_path)
-    if "actual" in df.columns and "prediction" in df.columns:
-        df = df.dropna(subset=["actual", "prediction"])
-        mae, rmse = compute_metrics(df)
-        st.markdown(f"### {model_name}")
-        st.write(f"MAE: `{mae:.6f}` | RMSE: `{rmse:.6f}`")
 
-        chart = plot_interactive(
-            [df[["Date", "prediction"]], df[["Date", "actual"]]],
-            [f"Predicted ({model_name})", "Actual"],
-            f"{model_name} vs. Actual Volatility",
-        )
-        st.plotly_chart(chart, use_container_width=True)
+    # ------------------ EWMA Case ------------------ #
+    if model_name == "EWMA":
+        if "ewma_volatility" in df.columns and "log_returns" in df.columns:
+            df["rolling_std"] = df["log_returns"].rolling(26).std()
+            df.dropna(inplace=True)
+            mae, rmse = compute_metrics(df["rolling_std"], df["ewma_volatility"])
 
-    elif (
-        model_name == "EWMA"
-        and "ewma_volatility" in df.columns
-        and "log_returns" in df.columns
-    ):
-        df["rolling_std"] = df["log_returns"].rolling(26).std()
-        df.dropna(inplace=True)
-        mae = mean_absolute_error(df["rolling_std"], df["ewma_volatility"])
-        rmse = np.sqrt(mean_squared_error(df["rolling_std"], df["ewma_volatility"]))
-        st.markdown("### EWMA")
-        st.write(f"MAE: `{mae:.6f}` | RMSE: `{rmse:.6f}`")
+            st.markdown(f"### {model_name}")
+            st.write(f"MAE: `{mae:.6f}` | RMSE: `{rmse:.6f}`")
 
-        chart = plot_interactive(
-            [df[["Date", "ewma_volatility"]], df[["Date", "rolling_std"]]],
-            ["EWMA Volatility", "Rolling Std Dev (26)"],
-            "EWMA vs Rolling Std Dev",
-        )
-        st.plotly_chart(chart, use_container_width=True)
+            fig = plot_interactive(
+                [df[["Date", "ewma_volatility"]], df[["Date", "rolling_std"]]],
+                ["EWMA Volatility", "Rolling Std Dev (26)"],
+                "EWMA vs Rolling Std Dev",
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.warning(f"Required columns missing for {model_name}")
+        continue
+
+    # ------------------ LSTM-GARCH-EWMA-VIX Case ------------------ #
+    elif model_name == "LSTM-GARCH-EWMA-VIX":
+        if (
+            "predicted_volatility_lstm_garch_ewma_vix" in df.columns
+            and "actual" in df.columns
+        ):
+            df = df.dropna(
+                subset=["predicted_volatility_lstm_garch_ewma_vix", "actual"]
+            )
+            df.rename(
+                columns={"predicted_volatility_lstm_garch_ewma_vix": "prediction"},
+                inplace=True,
+            )
+        else:
+            st.warning(f"Required columns not found in {model_name}")
+            continue
+
+    # ------------------ Default Prediction-Based Models ------------------ #
+    elif "prediction" in df.columns and "actual" in df.columns:
+        df = df.dropna(subset=["prediction", "actual"])
     else:
-        st.warning(f"Unsupported format in {model_name}")
+        st.warning(f"Required columns not found in {model_name}")
+        continue
+
+    # ------------------ Metric & Plot Display ------------------ #
+    mae, rmse = compute_metrics(df["actual"], df["prediction"])
+    st.markdown(f"### {model_name}")
+    st.write(f"MAE: `{mae:.6f}` | RMSE: `{rmse:.6f}`")
+
+    fig = plot_interactive(
+        [df[["Date", "prediction"]], df[["Date", "actual"]]],
+        [f"Predicted ({model_name})", "Actual"],
+        f"{model_name} vs. Actual Volatility",
+    )
+    st.plotly_chart(fig, use_container_width=True)
