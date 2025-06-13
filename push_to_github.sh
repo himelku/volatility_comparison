@@ -4,8 +4,8 @@
 # CONFIGURATION — CHANGE THESE VALUES
 # ------------------------------------------
 GITHUB_USERNAME="himelku"                           # Your GitHub username
-GITHUB_REPO_NAME="volatility_comparison"    # Your GitHub repository name
-COMMIT_MESSAGE="interactive plot commit app.py" # Customize your commit message
+GITHUB_REPO_NAME="volatility_comparison_onechart_metric"    # Your GitHub repository name
+COMMIT_MESSAGE="first commit scrool onechart best metric" # Customize your commit message
 BRANCH_NAME="main"                             # Usually 'main' or 'master'
 
 # ------------------------------------------
