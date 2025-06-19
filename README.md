@@ -1,11 +1,14 @@
-# 📊 Intraday Volatility Forecasting with Hybrid GARCH-LSTM-VIX Models
-**A 15-Minute Interval Prediction Framework for SPY ETF using Statistical and Deep Learning Models**
+# 📊 Intraday Volatility Forecasting with Hybrid GARCH-LSTM Models and VIX Integration
+**A 15-Minute Interval Prediction Framework for the SPY ETF**
+
 
 ## 🧠 Project Overview
 
 This research project presents a robust intraday volatility forecasting pipeline using 15-minute interval data from the **SPY ETF**. It integrates statistical modeling (**GARCH**), deep learning (**LSTM**), and macroeconomic volatility indicators (**VIX**) to provide accurate short-term volatility predictions.
 
 The objective is to demonstrate how combining econometric techniques with deep learning and market sentiment proxies improves predictive power in high-frequency financial time series.
+
+Final Dashboard: https://volatilitycomparison-yeqjyzupv8xzdnf72h9jla.streamlit.app/
 
 ---
 
