@@ -174,10 +174,24 @@ else:
 
     # Show metrics table
     st.markdown("### 📌 Model Metrics")
+    # Collect results in a list of dicts
+    metrics_table = []
     for model_name in selected_models:
         if model_name in metrics:
             mae = metrics[model_name]["MAE"]
             rmse = metrics[model_name]["RMSE"]
-            st.write(
-                f"**{model_name}** - MAE: {mae:.6f} | RMSE: {rmse:.6f} {'🏆' if model_name == best_model else ''}"
+            is_best = "🏆" if model_name == best_model else ""
+            metrics_table.append(
+                {
+                    "Model": model_name,
+                    "MAE": round(mae, 6),
+                    "RMSE": round(rmse, 6),
+                    "Best": is_best,
+                }
             )
+
+    # Convert to DataFrame and display as a table
+    metrics_df = pd.DataFrame(metrics_table)
+    st.table(
+        metrics_df
+    )  # or use st.dataframe(metrics_df) for scrollable/sortable version
