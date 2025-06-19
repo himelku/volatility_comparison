@@ -162,9 +162,9 @@ volatility_prediction_project/
 
 ## 📅 Project Info.
 
-**Course**: Thesis Project – MQIM, University of New Brunswick
-**Contributor**: Md Mahmudul Hasan
-**Year**: 2025
+**Course**: Thesis Project – MQIM, University of New Brunswick\
+**Contributor**: Md Mahmudul Hasan\
+**Year**: 2025\
 **License**: MIT
 
 ---
