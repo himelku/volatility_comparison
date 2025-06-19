@@ -38,8 +38,8 @@ The objective is to demonstrate how combining econometric techniques with deep l
 
 ## 2. Data Collection and Preprocessing
 ### 2.1 Datasets Used
-- SPY 15-minute intraday data (Open, High, Low, Close, Volume) [fetch_intraday_data.py]
-- VIX 15-minute intraday data [fetch_vix_15min.py]
+- SPY 15-minute intraday data (Open, High, Low, Close, Volume) [`fetch_intraday_data.py`]
+- VIX 15-minute intraday data [`fetch_vix_15min.py`]
 ### 2.2 Data Source
 - Alpha Vantage API [https://www.alphavantage.co/]
 ### 2.3 Preprocessing Steps
@@ -150,14 +150,14 @@ volatility_prediction_project/
 └── README.md
 ```
 ### 5.1 Key Scripts
-- garch.py : Training and prediction for GARCH
-- lstm_intraday.py : Base LSTM model creation
-- get_best_hyperparameters.py :
-- lstm_garch_intraday.py : Hybrid model generation
-- ewma.py : EWMA volatility calculation
-- lstm_garch_ewma_vix.py :
-- models_comparison.py : Evaluation and plotting
-- app.py : Interactive dashboard for model selection and plot viewing
+- `garch.py` : Training and prediction for GARCH
+- `lstm_intraday.py` : Base LSTM model creation
+- `get_best_hyperparameters.py` :
+- `lstm_garch_intraday.py` : Hybrid model generation
+- `ewma.py` : EWMA volatility calculation
+- `lstm_garch_ewma_vix.py` :
+- `models_comparison.py` : Evaluation and plotting
+- `app.py` : Interactive dashboard for model selection and plot viewing
 
 
 ---
