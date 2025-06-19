@@ -193,11 +193,7 @@ Using interactive Plotly charts, users can view:
 ---
 
 ## 9. Conclusion
-This research builds a robust and extensible pipeline for intraday volatility forecasting. By blending GARCH’s
-statistical strength with LSTM’s sequence modeling capability and augmenting with market volatility indices
-(VIX) and technical indicators (EWMA), our hybrid models significantly improve volatility prediction
-performance.  The  accompanying  dashboard  offers  an  intuitive  and  flexible  interface  for  real-time
-comparison and visualization
+This project builds a robust and extensible pipeline for intraday volatility forecasting. By blending GARCH’s statistical strength with LSTM’s sequence modeling capability and augmenting with market volatility indices (VIX) and technical indicators (EWMA), our hybrid models significantly improve volatility prediction performance.  The  accompanying  dashboard  offers  an  intuitive  and  flexible  interface  for  real-time comparison and visualization
 
 
 ---
@@ -225,23 +221,21 @@ comparison and visualization
 
 🔍 Nelson, D. B. (1991). Conditional heteroskedasticity in asset returns: A new approach. Econometrica, 59(2), 347–370.
 
-🔍 The Review of Financial Studies, Vol. 19, No. 3 (Autumn, 2006), pp. 871-908. Published by: Oxford University Press. Sponsor: The Society for Financial Studies. URL: http://www.jstor.org/stable/3844016
+🔍 The Review of Financial Studies, Vol. 19, No. 3 (Autumn, 2006), pp. 871-908. Published by: Oxford University Press. Sponsor: The Society for Financial Studies.
 
 ---
 
 ## 📅 Project Info.
 
-**Course**: `Thesis Project – MQIM, University of New Brunswick`\
-**Contributor**: `Md Mahmudul Hasan`\
-**Year**: `2025`\
+`Thesis Project – MQIM, University of New Brunswick`\
+`Md Mahmudul Hasan`\
+`2025`
 
 ---
 
 ## Appendix
 ### Tools and Libraries
-- `Python 3.11`
-- `TensorFlow`, `Keras`, `pandas`, `numpy`, `scikit-learn`, `arch`
-- `Streamlit`, `Plotly`, `Matplotlib`
+`Python 3.11` `TensorFlow` `Keras` `pandas` `numpy` `scikit-learn` `arch` `Streamlit` `Plotly` `Matplotlib`
 
 
 ---
@@ -250,16 +244,16 @@ comparison and visualization
 
 This project was developed with the support of various open-source tools and AI assistance. Parts of the modeling pipeline and code structure were inspired by publicly available GitHub repositories, which were carefully adapted and referenced where appropriate.
 
-Additionally, OpenAI's ChatGPT (June 2024 version) was used as a supplementary tool to assist in explaining theoretical concepts (such as GARCH and LSTM models), troubleshooting code, drafting documentation, and brainstorming structure. **All modeling decisions, final code implementations, interpretations, and written content reflect my own understanding and work, developed under the guidance of my academic supervisor.**
+Additionally, OpenAI's ChatGPT (June 2024 version) was used as a supplementary tool to assist in explaining theoretical concepts (such as GARCH and LSTM models), troubleshooting code, drafting documentation, and brainstorming structure. **Overall modeling decisions, final code implementations, interpretations, and written content reflect my own understanding and work.**
 
 *The use of these tools is disclosed in the spirit of transparency and academic integrity, and their role remained supportive rather than generative.*
 
 
 ---
 ## Acknowledgments
-This research project was developed with the support of various open-source tools and repositories. I would like to acknowledge code structures and modeling ideas adapted from public GitHub repositories.
+This research project was developed with the support of various open-source tools and repositories. I would like to acknowledge code structures and modeling ideas adapted from publicly available GitHub repositories.
 
-I also wish to acknowledge OpenAI’s ChatGPT, which provided helpful technical explanations and suggestions during model development, coding, and documentation. All final decisions regarding modeling choices and interpretations were made independently.
+I also wish to acknowledge OpenAI’s ChatGPT, which provided helpful technical explanations and suggestions during model development, troubleshooting code, and documentation. All final decisions regarding modeling choices and interpretations were made independently.
 
 ---
 
