@@ -9,13 +9,13 @@ The objective is to demonstrate how combining econometric techniques with deep l
 
 ---
 
-Literature Review:
+**Literature Review:**
 
 “Building on the findings of Christoffersen and Diebold (2000), and Poon and Granger (2003), I integrate implied volatility into my forecasting framework to enhance accuracy during turbulent market conditions.”
 
 ---
 
-Methodology Justification:
+**Methodology Justification:**
 
 “Inspired by Blair, Poon, and Taylor (2001), I use 15-minute return data combined with VIX-based exogenous features to forecast SPY volatility.”
 
