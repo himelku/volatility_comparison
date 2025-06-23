@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from arch import arch_model
 
-# Download the dataset
+# Downloaded dataset
 sp = pd.read_csv("SPY_15min_intraday.csv")
 sp["timestamp"] = pd.to_datetime(sp["timestamp"])  # Ensure 'Date' is in datetime format
 
@@ -17,7 +17,6 @@ sp["volatility"] = sp["log_returns"].rolling(window=rolling_window_size).std()
 sp["scaled_log_returns"] = sp["log_returns"] * 1000
 sp.dropna(inplace=True)
 
-# Filter data starting from 1985 to use the first 15 years to look for best parameteres
 filtered_sp = sp.copy()
 
 print(f"Number of data points: {len(filtered_sp)}")

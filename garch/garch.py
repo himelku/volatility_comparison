@@ -1,4 +1,3 @@
-# garch.py HIMEL
 import pandas as pd
 import numpy as np
 import os
@@ -21,7 +20,7 @@ df["Date"] = pd.to_datetime(df["timestamp"])
 # Prepare the data
 sp = garch_data_prep(df)
 
-# Choose a start date that makes sense
+# Choose a start date
 start_date = "2025-05-07 06:30:00"  # Adjust if needed
 
 print(f"Data range: {sp['Date'].min()} to {sp['Date'].max()}")
