@@ -120,7 +120,7 @@ def create_model(input_shape):
 
 # Model settings
 input_shape = (time_steps, X.shape[2])
-model_save_path = os.path.join("lstm_garch", "lstm_garch_vix_intraday.weights.h5")
+model_save_path = os.path.join("data", "lstm_garch_vix_intraday.weights.h5")
 early_stopping = EarlyStopping(
     monitor="val_loss", patience=10, restore_best_weights=True
 )
