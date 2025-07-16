@@ -4,13 +4,12 @@ import pandas as pd
 from arch import arch_model
 
 
-
-
 def garch_data_prep(df):
     df = df.copy()
     df = df.sort_values("Date")
     df["log_returns"] = np.log(df["close"] / df["close"].shift(1))
-    df["volatility"] = df["log_returns"].rolling(window=10).std()
+    df["volatility"] = df["log_returns"].rolling(window=10).std().shift(-1)
+    # df["volatility"] = df["log_returns"].rolling(window=10).std()
     df.dropna(subset=["log_returns", "volatility"], inplace=True)
     return df
 

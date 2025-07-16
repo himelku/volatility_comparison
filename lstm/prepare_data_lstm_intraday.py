@@ -21,8 +21,8 @@ rolling_window_size = 26
 sp["log_returns"] = np.log(sp["close"] / sp["close"].shift(1))
 
 # Calculate volatility as the standard deviation of log returns
-sp["volatility"] = sp["log_returns"].rolling(window=rolling_window_size).std()
-
+sp["volatility"] = sp["log_returns"].rolling(window=rolling_window_size).std().shift(-1)
+sp.dropna(subset=["log_returns", "volatility"], inplace=True)
 # Add lagged volatility
 lag_days = 1
 for i in range(1, lag_days + 1):
