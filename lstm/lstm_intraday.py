@@ -32,7 +32,7 @@ X, y = create_dataset(
 )
 
 input_shape = (time_steps, X.shape[2])
-model_save_path = os.path.join("lstm_intraday.weights.h5")
+model_save_path = os.path.join("data", "lstm_intraday.weights.h5")
 
 # Early stopping callback
 early_stopping = EarlyStopping(

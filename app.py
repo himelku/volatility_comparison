@@ -195,3 +195,57 @@ else:
     st.table(
         metrics_df
     )  # or use st.dataframe(metrics_df) for scrollable/sortable version
+
+
+# ------------------ Dynamic EWMA Section ------------------ #
+st.markdown("## 📈 Interactive EWMA Volatility Explorer")
+
+# Load EWMA data
+ewma_path = os.path.join("data", "results_ewma.csv")
+if os.path.exists(ewma_path):
+    ewma_df = pd.read_csv(ewma_path)
+    ewma_df["Date"] = pd.to_datetime(ewma_df["Date"])
+
+    # Sidebar controls
+    lambda_option = st.sidebar.selectbox("Select λ for EWMA calculation:", [0.94, 0.97, 0.99], index=1)
+    date_range = st.slider("Select date range:", 
+                           min_value=ewma_df["Date"].min().date(),
+                           max_value=ewma_df["Date"].max().date(),
+                           value=(ewma_df["Date"].min().date(), ewma_df["Date"].max().date()))
+
+    # Filter by date range
+    mask = (ewma_df["Date"].dt.date >= date_range[0]) & (ewma_df["Date"].dt.date <= date_range[1])
+    ewma_df = ewma_df.loc[mask].copy()
+
+    # Compute EWMA volatility dynamically
+    span_value = int(2 / (1 - lambda_option) - 1)
+    ewma_df["ewma_dynamic"] = ewma_df["log_returns"].ewm(span=span_value).std()
+    ewma_df["rolling_std"] = ewma_df["log_returns"].rolling(26).std()
+    ewma_df.dropna(subset=["ewma_dynamic", "rolling_std"], inplace=True)
+
+    # Interactive Plotly chart
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=ewma_df["Date"], y=ewma_df["ewma_dynamic"],
+        mode="lines", name=f"EWMA (λ={lambda_option})",
+        line=dict(color="orange")
+    ))
+    fig.add_trace(go.Scatter(
+        x=ewma_df["Date"], y=ewma_df["rolling_std"],
+        mode="lines", name="Rolling Std Dev",
+        line=dict(dash="dash", color="blue")
+    ))
+
+    fig.update_layout(
+        title=f"EWMA vs Rolling Std Dev (λ = {lambda_option})",
+        xaxis_title="Date",
+        yaxis_title="Volatility",
+        template="plotly_white",
+        hovermode="x unified",
+        xaxis_rangeslider_visible=True
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+else:
+    st.warning("EWMA data not found at: data/results_ewma.csv")

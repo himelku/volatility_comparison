@@ -3,7 +3,7 @@ import numpy as np
 from arch import arch_model
 
 # Downloaded dataset
-sp = pd.read_csv("SPY_15min_intraday.csv")
+sp = pd.read_csv("data/SPY_15min_intraday.csv")
 sp["timestamp"] = pd.to_datetime(sp["timestamp"])  # Ensure 'Date' is in datetime format
 
 # Calculate daily log returns

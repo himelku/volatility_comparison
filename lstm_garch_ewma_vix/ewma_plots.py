@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+
+os.makedirs("plots", exist_ok=True)
 # Paths
 data_dir = "data"
 ewma_path = os.path.join(data_dir, "results_ewma.csv")

@@ -83,7 +83,7 @@ X, y = create_dataset(
 )
 
 input_shape = (time_steps, X.shape[2])
-model_save_path = "lstm_garch_vix_layer_1_intraday.weights.h5"
+model_save_path = "data/lstm_garch_vix_layer_1_intraday.weights.h5"
 early_stopping = EarlyStopping(
     monitor="val_loss", patience=10, restore_best_weights=True
 )
