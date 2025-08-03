@@ -1,0 +1,2 @@
+Total Observations,Total Runs,Avg Run Length,Max Run Length,Min Run Length,Ljung-Box p-value (lag=10),Plot Saved
+1289,31,41.58064516129032,315,1,1.7284237577176917e-248,christoffersen_test\garch_hit_sequence.png

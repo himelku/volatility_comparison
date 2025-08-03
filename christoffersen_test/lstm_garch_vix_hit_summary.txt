@@ -1,0 +1,9 @@
+| Metric                        | Value                  |
+|------------------------------|------------------------|
+| Total Observations | 463 |
+| Total Runs | 19 |
+| Avg Run Length | 24.36842105263158 |
+| Max Run Length | 194 |
+| Min Run Length | 1 |
+| Ljung-Box p-value (lag=10) | 6.6864156900347e-07 |
+| Plot Saved | christoffersen_test\lstm_garch_vix_hit_sequence.png |

@@ -1,0 +1,10 @@
+| Metric                        | Value                  |
+|------------------------------|------------------------|
+| Model | LSTM-GARCH-EWMA-VIX |
+| Total Observations | 463 |
+| Total Runs | 9 |
+| Avg Run Length | 51.44444444444444 |
+| Max Run Length | 233 |
+| Min Run Length | 1 |
+| Ljung-Box p-value (lag=10) | 7.579516110878876e-20 |
+| Plot Saved | christoffersen_test\lstm_garch_ewma_vix_hit_sequence.png |

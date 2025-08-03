@@ -1,0 +1,10 @@
+| Metric                        | Value                  |
+|------------------------------|------------------------|
+| Model | Pure LSTM |
+| Total Observations | 37 |
+| Total Runs | 1 |
+| Avg Run Length | 37.0 |
+| Max Run Length | 37 |
+| Min Run Length | 37 |
+| Ljung-Box p-value (lag=10) | nan |
+| Plot Saved | christoffersen_test\pure_lstm_hit_sequence.png |

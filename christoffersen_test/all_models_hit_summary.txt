@@ -1,0 +1,6 @@
+| Model | Total Observations | Total Runs | Avg Run Length | Max Run Length | Min Run Length | Ljung-Box p-value (lag=10) | Plot Saved |
+|-------|--------------------|------------|----------------|----------------|----------------|-----------------------------|-------------|
+| GARCH | 1289 | 31 | 41.58 | 315 | 1 | 1.7284237577176915e-248 | christoffersen_test\garch_hit_sequence.png |
+| LSTM-GARCH-VIX | 463 | 19 | 24.37 | 194 | 1 | 6.6864156900347e-07 | christoffersen_test\lstm_garch_vix_hit_sequence.png |
+| LSTM-GARCH-EWMA-VIX | 463 | 9 | 51.44 | 233 | 1 | 7.579516110878877e-20 | christoffersen_test\lstm_garch_ewma_vix_hit_sequence.png |
+| Pure LSTM | 37 | 1 | 37.00 | 37 | 37 | nan | christoffersen_test\pure_lstm_hit_sequence.png |

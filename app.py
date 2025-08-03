@@ -207,14 +207,20 @@ if os.path.exists(ewma_path):
     ewma_df["Date"] = pd.to_datetime(ewma_df["Date"])
 
     # Sidebar controls
-    lambda_option = st.sidebar.selectbox("Select λ for EWMA calculation:", [0.94, 0.97, 0.99], index=1)
-    date_range = st.slider("Select date range:", 
-                           min_value=ewma_df["Date"].min().date(),
-                           max_value=ewma_df["Date"].max().date(),
-                           value=(ewma_df["Date"].min().date(), ewma_df["Date"].max().date()))
+    lambda_option = st.sidebar.selectbox(
+        "Select λ for EWMA calculation:", [0.94, 0.97, 0.99], index=1
+    )
+    date_range = st.slider(
+        "Select date range:",
+        min_value=ewma_df["Date"].min().date(),
+        max_value=ewma_df["Date"].max().date(),
+        value=(ewma_df["Date"].min().date(), ewma_df["Date"].max().date()),
+    )
 
     # Filter by date range
-    mask = (ewma_df["Date"].dt.date >= date_range[0]) & (ewma_df["Date"].dt.date <= date_range[1])
+    mask = (ewma_df["Date"].dt.date >= date_range[0]) & (
+        ewma_df["Date"].dt.date <= date_range[1]
+    )
     ewma_df = ewma_df.loc[mask].copy()
 
     # Compute EWMA volatility dynamically
@@ -225,16 +231,24 @@ if os.path.exists(ewma_path):
 
     # Interactive Plotly chart
     fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=ewma_df["Date"], y=ewma_df["ewma_dynamic"],
-        mode="lines", name=f"EWMA (λ={lambda_option})",
-        line=dict(color="orange")
-    ))
-    fig.add_trace(go.Scatter(
-        x=ewma_df["Date"], y=ewma_df["rolling_std"],
-        mode="lines", name="Rolling Std Dev",
-        line=dict(dash="dash", color="blue")
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=ewma_df["Date"],
+            y=ewma_df["ewma_dynamic"],
+            mode="lines",
+            name=f"EWMA (λ={lambda_option})",
+            line=dict(color="orange"),
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=ewma_df["Date"],
+            y=ewma_df["rolling_std"],
+            mode="lines",
+            name="Rolling Std Dev",
+            line=dict(dash="dash", color="blue"),
+        )
+    )
 
     fig.update_layout(
         title=f"EWMA vs Rolling Std Dev (λ = {lambda_option})",
@@ -242,10 +256,76 @@ if os.path.exists(ewma_path):
         yaxis_title="Volatility",
         template="plotly_white",
         hovermode="x unified",
-        xaxis_rangeslider_visible=True
+        xaxis_rangeslider_visible=True,
     )
 
     st.plotly_chart(fig, use_container_width=True)
 
 else:
     st.warning("EWMA data not found at: data/results_ewma.csv")
+
+
+# ------------------ Christoffersen Test Results ------------------ #
+st.markdown("## ✅ Christoffersen Hit Sequence Test Results")
+
+# Read the full summary table
+summary_path = os.path.join("christoffersen_test", "all_models_hit_summary.csv")
+plot_dir = "christoffersen_test"
+
+if os.path.exists(summary_path):
+    df = pd.read_csv(summary_path)
+
+    # Sidebar model selector
+    model_selected = st.selectbox("Select Model", df["Model"].tolist())
+
+    # Show model-specific plot
+    selected_row = df[df["Model"] == model_selected].iloc[0]
+    plot_path = selected_row["Plot Saved"]
+
+    st.markdown(f"### 📌 Selected Model: `{model_selected}`")
+    if os.path.exists(plot_path):
+        st.image(
+            plot_path,
+            caption=f"{model_selected} - Hit Sequence (95% Interval)",
+            use_container_width=True,
+        )
+
+    # Explanation block
+    with st.expander("🧠 Interpretation of Test Result"):
+        p_val = selected_row["Ljung-Box p-value (lag=10)"]
+        max_run = selected_row["Max Run Length"]
+        total_runs = selected_row["Total Runs"]
+
+        if p_val < 0.05:
+            st.error(
+                f"❌ The Ljung-Box p-value = {p_val:.2e} indicates the **hit sequence is NOT independent**."
+            )
+            st.markdown(f"- Longest uninterrupted run: `{max_run}` steps")
+            st.markdown(
+                f"- Only `{total_runs}` total runs suggest **forecast errors are clustered**."
+            )
+            st.markdown(
+                "This implies the model tends to under- or overestimate volatility in certain regimes."
+            )
+        else:
+            st.success(
+                f"✅ The Ljung-Box p-value = {p_val:.2f} suggests the hit sequence **passes the independence test**."
+            )
+            st.markdown(
+                "The forecast errors appear to be randomly distributed — a desirable behavior."
+            )
+
+    # Summary Table
+    with st.expander("📋 Full Comparison Table"):
+        st.dataframe(df)
+
+    # Download buttons
+    with open(summary_path, "rb") as f:
+        st.download_button(
+            "📥 Download Full Summary CSV", f, file_name="all_models_hit_summary.csv"
+        )
+
+else:
+    st.warning(
+        "Christoffersen results not found. Please generate them using the test scripts."
+    )

@@ -1,0 +1,2 @@
+Model,Total Observations,Total Runs,Avg Run Length,Max Run Length,Min Run Length,Ljung-Box p-value (lag=10),Plot Saved
+Pure LSTM,37,1,37.0,37,37,,christoffersen_test\pure_lstm_hit_sequence.png
