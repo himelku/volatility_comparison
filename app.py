@@ -268,7 +268,7 @@ else:
 # ------------------ Christoffersen Test Results ------------------ #
 st.markdown("## ✅ Christoffersen Hit Sequence Test Results")
 
-# Read the full summary table
+# Load summary table
 summary_path = os.path.join("christoffersen_test", "all_models_hit_summary.csv")
 plot_dir = "christoffersen_test"
 
@@ -278,10 +278,14 @@ if os.path.exists(summary_path):
     # Sidebar model selector
     model_selected = st.selectbox("Select Model", df["Model"].tolist())
 
-    # Show model-specific plot
+    # Fetch selected row
     selected_row = df[df["Model"] == model_selected].iloc[0]
-    plot_path = selected_row["Plot Saved"]
 
+    # Construct full path to the plot (fixing path issue)
+    plot_filename = os.path.basename(selected_row["Plot Saved"])
+    plot_path = os.path.join(plot_dir, plot_filename)
+
+    # Display selected plot
     st.markdown(f"### 📌 Selected Model: `{model_selected}`")
     if os.path.exists(plot_path):
         st.image(
@@ -289,6 +293,8 @@ if os.path.exists(summary_path):
             caption=f"{model_selected} - Hit Sequence (95% Interval)",
             use_container_width=True,
         )
+    else:
+        st.warning(f"❌ Plot not found: `{plot_path}`")
 
     # Explanation block
     with st.expander("🧠 Interpretation of Test Result"):
@@ -319,7 +325,7 @@ if os.path.exists(summary_path):
     with st.expander("📋 Full Comparison Table"):
         st.dataframe(df)
 
-    # Download buttons
+    # Download summary CSV
     with open(summary_path, "rb") as f:
         st.download_button(
             "📥 Download Full Summary CSV", f, file_name="all_models_hit_summary.csv"
@@ -327,5 +333,5 @@ if os.path.exists(summary_path):
 
 else:
     st.warning(
-        "Christoffersen results not found. Please generate them using the test scripts."
+        "⚠️ Christoffersen results not found. Please generate them using the test scripts."
     )
