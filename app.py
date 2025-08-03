@@ -283,7 +283,8 @@ if os.path.exists(summary_path):
 
     # Construct full path to the plot (fixing path issue)
     plot_filename = os.path.basename(selected_row["Plot Saved"])
-    plot_path = os.path.join(plot_dir, plot_filename)
+    # Construct full plot path — already stored correctly
+    plot_path = selected_row["Plot Saved"]  # Do NOT prepend any folder
 
     # Display selected plot
     st.markdown(f"### 📌 Selected Model: `{model_selected}`")
@@ -294,7 +295,7 @@ if os.path.exists(summary_path):
             use_container_width=True,
         )
     else:
-        st.warning(f"❌ Plot not found: `{plot_path}`")
+        st.warning(f"❌ Plot not found at path: `{plot_path}`")
 
     # Explanation block
     with st.expander("🧠 Interpretation of Test Result"):
