@@ -324,12 +324,6 @@ if os.path.exists(summary_path):
     with st.expander("📋 Full Comparison Table"):
         st.dataframe(df)
 
-    # Download summary CSV
-    with open(summary_path, "rb") as f:
-        st.download_button(
-            "📥 Download Full Summary CSV", f, file_name="all_models_hit_summary.csv"
-        )
-
 else:
     st.warning(
         "⚠️ Christoffersen results not found. Please generate them using the test scripts."
