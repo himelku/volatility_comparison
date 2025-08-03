@@ -270,7 +270,6 @@ st.markdown("## ✅ Christoffersen Hit Sequence Test Results")
 
 # Load summary table
 summary_path = os.path.join("christoffersen_test", "all_models_hit_summary.csv")
-plot_dir = "christoffersen_test"
 
 if os.path.exists(summary_path):
     df = pd.read_csv(summary_path)
@@ -281,10 +280,9 @@ if os.path.exists(summary_path):
     # Fetch selected row
     selected_row = df[df["Model"] == model_selected].iloc[0]
 
-    # Construct full path to the plot (fixing path issue)
-    plot_filename = os.path.basename(selected_row["Plot Saved"])
-    # Construct full plot path — already stored correctly
-    plot_path = selected_row["Plot Saved"]  # Do NOT prepend any folder
+    # Normalize and extract plot path
+    raw_plot_path = selected_row["Plot Saved"]
+    plot_path = raw_plot_path.replace("\\", "/")  # Handle Windows slashes
 
     # Display selected plot
     st.markdown(f"### 📌 Selected Model: `{model_selected}`")
